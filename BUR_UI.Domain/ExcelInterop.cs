@@ -364,7 +364,9 @@ namespace BUR_UI.Logic
             if (MessageBox.Show("Do you want to continue to printing?", "Print?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 ExSheet.PrintOutEx();
-            
+
+            ExApp.Visible = true;
+            ExSheet.PrintPreview();
             ExBook.Close();
         }
         public void createMonthlyCO(List<Entities.SAAOModel> Monthly, string month)

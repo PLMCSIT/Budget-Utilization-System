@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lblUser = new System.Windows.Forms.Label();
             this.lblPos = new System.Windows.Forms.Label();
@@ -97,7 +97,6 @@
             this.cmbPayee = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbOffice = new System.Windows.Forms.ComboBox();
-            this.txtBURNumber = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -144,6 +143,7 @@
             this.colAcctName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAcctClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.txtBURNumber = new System.Windows.Forms.MaskedTextBox();
             this.grpUser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPic)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -471,14 +471,14 @@
             this.colDate,
             this.colStaff});
             this.dataGridMain.ContextMenuStrip = this.contextMenuStrip1;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridMain.Location = new System.Drawing.Point(3, 36);
             this.dataGridMain.Name = "dataGridMain";
             this.dataGridMain.RowHeadersWidth = 4;
@@ -532,6 +532,7 @@
             // pnlCreate
             // 
             this.pnlCreate.BackColor = System.Drawing.Color.Transparent;
+            this.pnlCreate.Controls.Add(this.txtBURNumber);
             this.pnlCreate.Controls.Add(this.txtPR);
             this.pnlCreate.Controls.Add(this.button5);
             this.pnlCreate.Controls.Add(this.button4);
@@ -542,7 +543,6 @@
             this.pnlCreate.Controls.Add(this.cmbPayee);
             this.pnlCreate.Controls.Add(this.label3);
             this.pnlCreate.Controls.Add(this.cmbOffice);
-            this.pnlCreate.Controls.Add(this.txtBURNumber);
             this.pnlCreate.Controls.Add(this.label5);
             this.pnlCreate.Controls.Add(this.label2);
             this.pnlCreate.Controls.Add(this.label1);
@@ -565,9 +565,9 @@
             // 
             this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.button5.ForeColor = System.Drawing.Color.Black;
-            this.button5.Location = new System.Drawing.Point(992, 442);
+            this.button5.Location = new System.Drawing.Point(992, 434);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(103, 35);
+            this.button5.Size = new System.Drawing.Size(103, 43);
             this.button5.TabIndex = 14;
             this.button5.Text = "Cancel";
             this.button5.UseVisualStyleBackColor = false;
@@ -855,15 +855,6 @@
             this.cmbOffice.Size = new System.Drawing.Size(330, 29);
             this.cmbOffice.TabIndex = 5;
             this.cmbOffice.SelectedIndexChanged += new System.EventHandler(this.cmbOffice_SelectedIndexChanged);
-            // 
-            // txtBURNumber
-            // 
-            this.txtBURNumber.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtBURNumber.Location = new System.Drawing.Point(193, 80);
-            this.txtBURNumber.Name = "txtBURNumber";
-            this.txtBURNumber.ReadOnly = true;
-            this.txtBURNumber.Size = new System.Drawing.Size(330, 29);
-            this.txtBURNumber.TabIndex = 4;
             // 
             // label5
             // 
@@ -1365,6 +1356,14 @@
             this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Title = "Select image";
             // 
+            // txtBURNumber
+            // 
+            this.txtBURNumber.Location = new System.Drawing.Point(193, 85);
+            this.txtBURNumber.Mask = "\\01-0000-00-0000";
+            this.txtBURNumber.Name = "txtBURNumber";
+            this.txtBURNumber.Size = new System.Drawing.Size(330, 25);
+            this.txtBURNumber.TabIndex = 16;
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -1478,7 +1477,6 @@
         public System.Windows.Forms.TextBox txtDescription;
         public System.Windows.Forms.ComboBox cmbPayee;
         public System.Windows.Forms.ComboBox cmbOffice;
-        public System.Windows.Forms.TextBox txtBURNumber;
         public System.Windows.Forms.NumericUpDown numAmount;
         public System.Windows.Forms.TextBox txtAcctName;
         public System.Windows.Forms.ComboBox cmbCode;
@@ -1535,6 +1533,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblAcctClass;
         private System.Windows.Forms.Label lblAcctName;
+        private System.Windows.Forms.MaskedTextBox txtBURNumber;
     }
 }
 

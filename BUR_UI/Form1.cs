@@ -232,7 +232,7 @@ namespace BUR_UI
         {
             pnlMain.Visible = false;
             pnlCreate.Visible = true;
-            txtBURNumber.Text = IncrementBUR();
+            //txtBURNumber.Text = IncrementBUR();
 
             List<string> Offices = link.FillOffice();
             List<string> Classes = link.FillClass();
@@ -468,7 +468,7 @@ namespace BUR_UI
             BURModel BUR = new BURModel();
             Typer typer = new Typer();
 
-            if (cmbOffice.SelectedIndex >= 0 && txtPR.Text != "")
+            if (cmbOffice.SelectedIndex >= 0)
             {
                 BUR.BURNumber = txtBURNumber.Text;
                 BUR.Office = cmbOffice.Text;
