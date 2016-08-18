@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lblUser = new System.Windows.Forms.Label();
             this.lblPos = new System.Windows.Forms.Label();
@@ -144,6 +144,7 @@
             this.colAcctClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.txtBURNumber = new System.Windows.Forms.MaskedTextBox();
+            this.txtPayee = new System.Windows.Forms.TextBox();
             this.grpUser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPic)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -471,14 +472,14 @@
             this.colDate,
             this.colStaff});
             this.dataGridMain.ContextMenuStrip = this.contextMenuStrip1;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridMain.Location = new System.Drawing.Point(3, 36);
             this.dataGridMain.Name = "dataGridMain";
             this.dataGridMain.RowHeadersWidth = 4;
@@ -532,6 +533,7 @@
             // pnlCreate
             // 
             this.pnlCreate.BackColor = System.Drawing.Color.Transparent;
+            this.pnlCreate.Controls.Add(this.txtPayee);
             this.pnlCreate.Controls.Add(this.txtBURNumber);
             this.pnlCreate.Controls.Add(this.txtPR);
             this.pnlCreate.Controls.Add(this.button5);
@@ -1364,6 +1366,15 @@
             this.txtBURNumber.Size = new System.Drawing.Size(330, 25);
             this.txtBURNumber.TabIndex = 16;
             // 
+            // txtPayee
+            // 
+            this.txtPayee.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPayee.Location = new System.Drawing.Point(193, 160);
+            this.txtPayee.Name = "txtPayee";
+            this.txtPayee.Size = new System.Drawing.Size(330, 29);
+            this.txtPayee.TabIndex = 17;
+            this.txtPayee.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -1534,6 +1545,7 @@
         private System.Windows.Forms.Label lblAcctClass;
         private System.Windows.Forms.Label lblAcctName;
         private System.Windows.Forms.MaskedTextBox txtBURNumber;
+        public System.Windows.Forms.TextBox txtPayee;
     }
 }
 

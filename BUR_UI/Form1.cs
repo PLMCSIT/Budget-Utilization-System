@@ -238,6 +238,7 @@ namespace BUR_UI
             List<string> Classes = link.FillClass();
 
             foreach (var office in Offices) cmbOffice.Items.Add(office);
+            cmbOffice.Items.Add("Other");
             foreach (var cls in Classes) cmbClass.Items.Add(cls);
         }
         private void button5_Click(object sender, EventArgs e)
@@ -394,15 +395,29 @@ namespace BUR_UI
         private void cmbOffice_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbOffice.SelectedIndex == -1)
+            {
+                cmbPayee.Visible = true;
                 cmbPayee.Enabled = false;
-            else
+                txtPayee.Visible = false;
+            } else if (cmbOffice.SelectedIndex == cmbOffice.Items.Count - 1)
+            {
+                cmbPayee.Visible = false;
+                txtPayee.Visible = true;
+            } else
+            {
+                cmbPayee.Visible = true;
                 cmbPayee.Enabled = true;
+                txtPayee.Visible = false;
+            }
 
-            cmbPayee.Items.Clear();
+            if (cmbPayee.Visible)
+            {
+                cmbPayee.Items.Clear();
 
-            List<string> Payee = link.FillPayeeByOffice(cmbOffice.Text);
+                List<string> Payee = link.FillPayeeByOffice(cmbOffice.Text);
 
-            foreach (var item in Payee) cmbPayee.Items.Add(item);
+                foreach (var item in Payee) cmbPayee.Items.Add(item);
+            }
         }
         private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
         {
