@@ -71,6 +71,8 @@
             this.colStaff = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.pnlCreate = new System.Windows.Forms.Panel();
+            this.txtPayee = new System.Windows.Forms.TextBox();
+            this.txtBURNumber = new System.Windows.Forms.MaskedTextBox();
             this.txtPR = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -143,8 +145,6 @@
             this.colAcctName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAcctClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.txtBURNumber = new System.Windows.Forms.MaskedTextBox();
-            this.txtPayee = new System.Windows.Forms.TextBox();
             this.grpUser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPic)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -555,6 +555,23 @@
             this.pnlCreate.Visible = false;
             this.pnlCreate.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCreate_Paint);
             // 
+            // txtPayee
+            // 
+            this.txtPayee.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPayee.Location = new System.Drawing.Point(193, 160);
+            this.txtPayee.Name = "txtPayee";
+            this.txtPayee.Size = new System.Drawing.Size(330, 29);
+            this.txtPayee.TabIndex = 17;
+            this.txtPayee.Visible = false;
+            // 
+            // txtBURNumber
+            // 
+            this.txtBURNumber.Location = new System.Drawing.Point(193, 85);
+            this.txtBURNumber.Mask = "\\01-0000-00-0000";
+            this.txtBURNumber.Name = "txtBURNumber";
+            this.txtBURNumber.Size = new System.Drawing.Size(330, 25);
+            this.txtBURNumber.TabIndex = 16;
+            // 
             // txtPR
             // 
             this.txtPR.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -565,8 +582,8 @@
             // 
             // button5
             // 
-            this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.button5.ForeColor = System.Drawing.Color.Black;
+            this.button5.BackColor = System.Drawing.SystemColors.Control;
+            this.button5.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button5.Location = new System.Drawing.Point(992, 434);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 43);
@@ -577,9 +594,9 @@
             // 
             // button4
             // 
-            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.button4.BackColor = System.Drawing.SystemColors.Control;
             this.button4.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.ForeColor = System.Drawing.Color.White;
+            this.button4.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button4.Location = new System.Drawing.Point(1101, 434);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(117, 43);
@@ -653,9 +670,9 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnEdit.BackColor = System.Drawing.SystemColors.Control;
             this.btnEdit.Enabled = false;
-            this.btnEdit.ForeColor = System.Drawing.Color.Black;
+            this.btnEdit.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnEdit.Location = new System.Drawing.Point(537, 126);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(103, 35);
@@ -666,9 +683,9 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.BackColor = System.Drawing.Color.Red;
+            this.btnDelete.BackColor = System.Drawing.SystemColors.Control;
             this.btnDelete.Enabled = false;
-            this.btnDelete.ForeColor = System.Drawing.Color.White;
+            this.btnDelete.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnDelete.Location = new System.Drawing.Point(537, 166);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(103, 35);
@@ -679,9 +696,9 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnAdd.BackColor = System.Drawing.SystemColors.Control;
             this.btnAdd.Enabled = false;
-            this.btnAdd.ForeColor = System.Drawing.Color.Black;
+            this.btnAdd.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnAdd.Location = new System.Drawing.Point(537, 86);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(103, 35);
@@ -1358,23 +1375,6 @@
             this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Title = "Select image";
             // 
-            // txtBURNumber
-            // 
-            this.txtBURNumber.Location = new System.Drawing.Point(193, 85);
-            this.txtBURNumber.Mask = "\\01-0000-00-0000";
-            this.txtBURNumber.Name = "txtBURNumber";
-            this.txtBURNumber.Size = new System.Drawing.Size(330, 25);
-            this.txtBURNumber.TabIndex = 16;
-            // 
-            // txtPayee
-            // 
-            this.txtPayee.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPayee.Location = new System.Drawing.Point(193, 160);
-            this.txtPayee.Name = "txtPayee";
-            this.txtPayee.Size = new System.Drawing.Size(330, 29);
-            this.txtPayee.TabIndex = 17;
-            this.txtPayee.Visible = false;
-            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -1382,8 +1382,8 @@
             this.BackgroundImage = global::BUR_UI.Properties.Resources.bg;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1264, 681);
-            this.Controls.Add(this.pnlCreate);
             this.Controls.Add(this.pnlMain);
+            this.Controls.Add(this.pnlCreate);
             this.Controls.Add(this.pnlAdmin);
             this.Controls.Add(this.picBanner);
             this.Controls.Add(this.label4);
