@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lblUser = new System.Windows.Forms.Label();
             this.lblPos = new System.Windows.Forms.Label();
@@ -41,13 +41,14 @@
             this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sAAOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.monthlyReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.monthlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
             this.picBanner = new System.Windows.Forms.PictureBox();
             this.pnlMain = new System.Windows.Forms.Panel();
+            this.label18 = new System.Windows.Forms.Label();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolBtnCreate = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -71,14 +72,16 @@
             this.colStaff = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.pnlCreate = new System.Windows.Forms.Panel();
+            this.lblSign = new System.Windows.Forms.Label();
+            this.cmbSign = new System.Windows.Forms.ComboBox();
             this.txtPayee = new System.Windows.Forms.TextBox();
             this.txtBURNumber = new System.Windows.Forms.MaskedTextBox();
             this.txtPR = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.grpParticulars = new System.Windows.Forms.GroupBox();
+            this.cmbCode = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -86,7 +89,6 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.numAmount = new System.Windows.Forms.NumericUpDown();
             this.txtAcctName = new System.Windows.Forms.TextBox();
-            this.cmbCode = new System.Windows.Forms.ComboBox();
             this.cmbClass = new System.Windows.Forms.ComboBox();
             this.dataGridParticulars = new System.Windows.Forms.DataGridView();
             this.colClassification = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -129,13 +131,15 @@
             this.colPicPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabAccounts = new System.Windows.Forms.TabPage();
             this.grpAcctDetails = new System.Windows.Forms.GroupBox();
+            this.txtAcctCode = new System.Windows.Forms.TextBox();
             this.btnDeleteAccount = new System.Windows.Forms.Button();
             this.btnEditAccount = new System.Windows.Forms.Button();
             this.cmbAcctClass = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.txtEditAcctName = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
-            this.numAcctCode = new System.Windows.Forms.NumericUpDown();
+            this.numAB = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.lblAcctClass = new System.Windows.Forms.Label();
             this.lblAcctName = new System.Windows.Forms.Label();
@@ -144,6 +148,9 @@
             this.colAcctCode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAcctName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAcctClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colAB = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabLogs = new System.Windows.Forms.TabPage();
+            this.txtLogs = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.grpUser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPic)).BeginInit();
@@ -166,8 +173,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridUsers)).BeginInit();
             this.tabAccounts.SuspendLayout();
             this.grpAcctDetails.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numAcctCode)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAccounts)).BeginInit();
+            this.tabLogs.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblUser
@@ -254,30 +262,32 @@
             this.createToolStripMenuItem.Name = "createToolStripMenuItem";
             this.createToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.createToolStripMenuItem.Text = "Create";
+            this.createToolStripMenuItem.Click += new System.EventHandler(this.createToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sAAOToolStripMenuItem,
-            this.monthlyReportToolStripMenuItem});
+            this.monthlyToolStripMenuItem});
             this.editToolStripMenuItem.Image = global::BUR_UI.Properties.Resources.generate;
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.editToolStripMenuItem.Text = "Generate...";
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // sAAOToolStripMenuItem
             // 
-            this.sAAOToolStripMenuItem.Image = global::BUR_UI.Properties.Resources.SAAO_Icon;
             this.sAAOToolStripMenuItem.Name = "sAAOToolStripMenuItem";
-            this.sAAOToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.sAAOToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.sAAOToolStripMenuItem.Text = "SAAO";
+            this.sAAOToolStripMenuItem.Click += new System.EventHandler(this.sAAOToolStripMenuItem_Click);
             // 
-            // monthlyReportToolStripMenuItem
+            // monthlyToolStripMenuItem
             // 
-            this.monthlyReportToolStripMenuItem.Image = global::BUR_UI.Properties.Resources.Report_Icon;
-            this.monthlyReportToolStripMenuItem.Name = "monthlyReportToolStripMenuItem";
-            this.monthlyReportToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.monthlyReportToolStripMenuItem.Text = "Monthly Report";
+            this.monthlyToolStripMenuItem.Name = "monthlyToolStripMenuItem";
+            this.monthlyToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.monthlyToolStripMenuItem.Text = "Monthly";
+            this.monthlyToolStripMenuItem.Click += new System.EventHandler(this.monthlyToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -285,6 +295,7 @@
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.deleteToolStripMenuItem.Text = "Edit";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // printToolStripMenuItem
             // 
@@ -306,11 +317,11 @@
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Segoe UI Light", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(882, 655);
+            this.label4.Location = new System.Drawing.Point(842, 655);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(373, 17);
+            this.label4.Size = new System.Drawing.Size(410, 17);
             this.label4.TabIndex = 10;
-            this.label4.Text = "Copyright © 2016 Seven-Fifty, Pamantasan ng Lungsod ng Maynila";
+            this.label4.Text = "Copyright © 2016-2017 Seven-Fifty, Pamantasan ng Lungsod ng Maynila";
             // 
             // picBanner
             // 
@@ -322,10 +333,12 @@
             this.picBanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picBanner.TabIndex = 11;
             this.picBanner.TabStop = false;
+            this.picBanner.Click += new System.EventHandler(this.picBanner_Click);
             // 
             // pnlMain
             // 
             this.pnlMain.BackColor = System.Drawing.Color.Transparent;
+            this.pnlMain.Controls.Add(this.label18);
             this.pnlMain.Controls.Add(this.toolStrip);
             this.pnlMain.Controls.Add(this.dataGridMain);
             this.pnlMain.Controls.Add(this.txtSearch);
@@ -333,6 +346,16 @@
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.Size = new System.Drawing.Size(1239, 507);
             this.pnlMain.TabIndex = 12;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label18.Location = new System.Drawing.Point(15, 11);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(47, 17);
+            this.label18.TabIndex = 15;
+            this.label18.Text = "Search";
             // 
             // toolStrip
             // 
@@ -432,6 +455,7 @@
             this.toolBtnDelete.Name = "toolBtnDelete";
             this.toolBtnDelete.Size = new System.Drawing.Size(23, 24);
             this.toolBtnDelete.Text = "toolStripButton4";
+            this.toolBtnDelete.Click += new System.EventHandler(this.toolBtnDelete_Click);
             // 
             // toolStripLabel4
             // 
@@ -472,15 +496,16 @@
             this.colDate,
             this.colStaff});
             this.dataGridMain.ContextMenuStrip = this.contextMenuStrip1;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridMain.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridMain.Location = new System.Drawing.Point(3, 36);
+            this.dataGridMain.MultiSelect = false;
             this.dataGridMain.Name = "dataGridMain";
             this.dataGridMain.RowHeadersWidth = 4;
             this.dataGridMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -524,7 +549,7 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.Location = new System.Drawing.Point(3, 5);
+            this.txtSearch.Location = new System.Drawing.Point(67, 8);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(292, 25);
             this.txtSearch.TabIndex = 10;
@@ -533,6 +558,8 @@
             // pnlCreate
             // 
             this.pnlCreate.BackColor = System.Drawing.Color.Transparent;
+            this.pnlCreate.Controls.Add(this.lblSign);
+            this.pnlCreate.Controls.Add(this.cmbSign);
             this.pnlCreate.Controls.Add(this.txtPayee);
             this.pnlCreate.Controls.Add(this.txtBURNumber);
             this.pnlCreate.Controls.Add(this.txtPR);
@@ -555,6 +582,31 @@
             this.pnlCreate.Visible = false;
             this.pnlCreate.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCreate_Paint);
             // 
+            // lblSign
+            // 
+            this.lblSign.AutoSize = true;
+            this.lblSign.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSign.ForeColor = System.Drawing.Color.White;
+            this.lblSign.Location = new System.Drawing.Point(44, 370);
+            this.lblSign.Name = "lblSign";
+            this.lblSign.Size = new System.Drawing.Size(122, 21);
+            this.lblSign.TabIndex = 19;
+            this.lblSign.Text = "Signatory Office";
+            this.lblSign.Visible = false;
+            // 
+            // cmbSign
+            // 
+            this.cmbSign.DropDownHeight = 210;
+            this.cmbSign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSign.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbSign.FormattingEnabled = true;
+            this.cmbSign.IntegralHeight = false;
+            this.cmbSign.Location = new System.Drawing.Point(193, 367);
+            this.cmbSign.Name = "cmbSign";
+            this.cmbSign.Size = new System.Drawing.Size(330, 29);
+            this.cmbSign.TabIndex = 18;
+            this.cmbSign.Visible = false;
+            // 
             // txtPayee
             // 
             this.txtPayee.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -567,7 +619,7 @@
             // txtBURNumber
             // 
             this.txtBURNumber.Location = new System.Drawing.Point(193, 85);
-            this.txtBURNumber.Mask = "\\01-0000-00-0000";
+            this.txtBURNumber.Mask = "1\\01-0000-00-0000";
             this.txtBURNumber.Name = "txtBURNumber";
             this.txtBURNumber.Size = new System.Drawing.Size(330, 25);
             this.txtBURNumber.TabIndex = 16;
@@ -607,8 +659,8 @@
             // 
             // grpParticulars
             // 
+            this.grpParticulars.Controls.Add(this.cmbCode);
             this.grpParticulars.Controls.Add(this.label11);
-            this.grpParticulars.Controls.Add(this.label10);
             this.grpParticulars.Controls.Add(this.label9);
             this.grpParticulars.Controls.Add(this.label8);
             this.grpParticulars.Controls.Add(this.btnEdit);
@@ -616,7 +668,6 @@
             this.grpParticulars.Controls.Add(this.btnAdd);
             this.grpParticulars.Controls.Add(this.numAmount);
             this.grpParticulars.Controls.Add(this.txtAcctName);
-            this.grpParticulars.Controls.Add(this.cmbCode);
             this.grpParticulars.Controls.Add(this.cmbClass);
             this.grpParticulars.Controls.Add(this.dataGridParticulars);
             this.grpParticulars.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -628,6 +679,18 @@
             this.grpParticulars.TabStop = false;
             this.grpParticulars.Text = "Particulars";
             // 
+            // cmbCode
+            // 
+            this.cmbCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCode.Enabled = false;
+            this.cmbCode.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbCode.FormattingEnabled = true;
+            this.cmbCode.Location = new System.Drawing.Point(157, 42);
+            this.cmbCode.Name = "cmbCode";
+            this.cmbCode.Size = new System.Drawing.Size(317, 29);
+            this.cmbCode.TabIndex = 7;
+            this.cmbCode.SelectedIndexChanged += new System.EventHandler(this.cmbCode_SelectedIndexChanged);
+            // 
             // label11
             // 
             this.label11.AutoSize = true;
@@ -637,16 +700,6 @@
             this.label11.Size = new System.Drawing.Size(53, 17);
             this.label11.TabIndex = 16;
             this.label11.Text = "Amount";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(226, 22);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(93, 17);
-            this.label10.TabIndex = 15;
-            this.label10.Text = "Account Name";
             // 
             // label9
             // 
@@ -731,18 +784,6 @@
             this.txtAcctName.Size = new System.Drawing.Size(245, 29);
             this.txtAcctName.TabIndex = 8;
             this.txtAcctName.TextChanged += new System.EventHandler(this.txtAcctName_TextChanged);
-            // 
-            // cmbCode
-            // 
-            this.cmbCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCode.Enabled = false;
-            this.cmbCode.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbCode.FormattingEnabled = true;
-            this.cmbCode.Location = new System.Drawing.Point(157, 42);
-            this.cmbCode.Name = "cmbCode";
-            this.cmbCode.Size = new System.Drawing.Size(66, 29);
-            this.cmbCode.TabIndex = 7;
-            this.cmbCode.SelectedIndexChanged += new System.EventHandler(this.cmbCode_SelectedIndexChanged);
             // 
             // cmbClass
             // 
@@ -837,6 +878,7 @@
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(330, 100);
             this.txtDescription.TabIndex = 8;
+            this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
             // 
             // cmbPayee
             // 
@@ -858,7 +900,7 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(116, 163);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 21);
+            this.label3.Size = new System.Drawing.Size(51, 21);
             this.label3.TabIndex = 6;
             this.label3.Text = "Payee";
             // 
@@ -933,6 +975,7 @@
             // 
             this.tabAdmin.Controls.Add(this.tabPageUsers);
             this.tabAdmin.Controls.Add(this.tabAccounts);
+            this.tabAdmin.Controls.Add(this.tabLogs);
             this.tabAdmin.Location = new System.Drawing.Point(13, 6);
             this.tabAdmin.Name = "tabAdmin";
             this.tabAdmin.SelectedIndex = 0;
@@ -1072,7 +1115,7 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(34, 126);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(66, 17);
+            this.label14.Size = new System.Drawing.Size(67, 17);
             this.label14.TabIndex = 16;
             this.label14.Text = "User Type";
             // 
@@ -1095,13 +1138,14 @@
             // 
             // btnAllowEdit
             // 
+            this.btnAllowEdit.BackColor = System.Drawing.SystemColors.Control;
             this.btnAllowEdit.ForeColor = System.Drawing.Color.Black;
             this.btnAllowEdit.Location = new System.Drawing.Point(254, 14);
             this.btnAllowEdit.Name = "btnAllowEdit";
             this.btnAllowEdit.Size = new System.Drawing.Size(120, 30);
             this.btnAllowEdit.TabIndex = 12;
             this.btnAllowEdit.Text = "Allow Edit";
-            this.btnAllowEdit.UseVisualStyleBackColor = true;
+            this.btnAllowEdit.UseVisualStyleBackColor = false;
             this.btnAllowEdit.Click += new System.EventHandler(this.btnAllowEdit_Click);
             // 
             // picUserDetail
@@ -1128,6 +1172,7 @@
             this.colPosition,
             this.colPicPath});
             this.dataGridUsers.Location = new System.Drawing.Point(15, 17);
+            this.dataGridUsers.MultiSelect = false;
             this.dataGridUsers.Name = "dataGridUsers";
             this.dataGridUsers.ReadOnly = true;
             this.dataGridUsers.RowHeadersWidth = 4;
@@ -1186,13 +1231,15 @@
             // 
             // grpAcctDetails
             // 
+            this.grpAcctDetails.Controls.Add(this.txtAcctCode);
             this.grpAcctDetails.Controls.Add(this.btnDeleteAccount);
             this.grpAcctDetails.Controls.Add(this.btnEditAccount);
             this.grpAcctDetails.Controls.Add(this.cmbAcctClass);
             this.grpAcctDetails.Controls.Add(this.label17);
             this.grpAcctDetails.Controls.Add(this.txtEditAcctName);
             this.grpAcctDetails.Controls.Add(this.label16);
-            this.grpAcctDetails.Controls.Add(this.numAcctCode);
+            this.grpAcctDetails.Controls.Add(this.numAB);
+            this.grpAcctDetails.Controls.Add(this.label10);
             this.grpAcctDetails.Controls.Add(this.label12);
             this.grpAcctDetails.Controls.Add(this.lblAcctClass);
             this.grpAcctDetails.Controls.Add(this.lblAcctName);
@@ -1205,10 +1252,18 @@
             this.grpAcctDetails.TabStop = false;
             this.grpAcctDetails.Text = "Account Details";
             // 
+            // txtAcctCode
+            // 
+            this.txtAcctCode.Location = new System.Drawing.Point(144, 87);
+            this.txtAcctCode.Name = "txtAcctCode";
+            this.txtAcctCode.ReadOnly = true;
+            this.txtAcctCode.Size = new System.Drawing.Size(120, 25);
+            this.txtAcctCode.TabIndex = 11;
+            // 
             // btnDeleteAccount
             // 
             this.btnDeleteAccount.ForeColor = System.Drawing.Color.Black;
-            this.btnDeleteAccount.Location = new System.Drawing.Point(391, 51);
+            this.btnDeleteAccount.Location = new System.Drawing.Point(407, 200);
             this.btnDeleteAccount.Name = "btnDeleteAccount";
             this.btnDeleteAccount.Size = new System.Drawing.Size(116, 24);
             this.btnDeleteAccount.TabIndex = 10;
@@ -1218,7 +1273,7 @@
             // btnEditAccount
             // 
             this.btnEditAccount.ForeColor = System.Drawing.Color.Black;
-            this.btnEditAccount.Location = new System.Drawing.Point(391, 24);
+            this.btnEditAccount.Location = new System.Drawing.Point(407, 173);
             this.btnEditAccount.Name = "btnEditAccount";
             this.btnEditAccount.Size = new System.Drawing.Size(116, 24);
             this.btnEditAccount.TabIndex = 9;
@@ -1236,7 +1291,7 @@
             "MOOE",
             "FE",
             "CO"});
-            this.cmbAcctClass.Location = new System.Drawing.Point(129, 175);
+            this.cmbAcctClass.Location = new System.Drawing.Point(144, 156);
             this.cmbAcctClass.Name = "cmbAcctClass";
             this.cmbAcctClass.Size = new System.Drawing.Size(120, 25);
             this.cmbAcctClass.TabIndex = 8;
@@ -1244,7 +1299,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(23, 178);
+            this.label17.Location = new System.Drawing.Point(23, 159);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(83, 17);
             this.label17.TabIndex = 7;
@@ -1252,7 +1307,7 @@
             // 
             // txtEditAcctName
             // 
-            this.txtEditAcctName.Location = new System.Drawing.Point(129, 141);
+            this.txtEditAcctName.Location = new System.Drawing.Point(144, 122);
             this.txtEditAcctName.Name = "txtEditAcctName";
             this.txtEditAcctName.ReadOnly = true;
             this.txtEditAcctName.Size = new System.Drawing.Size(258, 25);
@@ -1261,39 +1316,44 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(22, 144);
+            this.label16.Location = new System.Drawing.Point(22, 125);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(93, 17);
             this.label16.TabIndex = 5;
             this.label16.Text = "Account Name";
             // 
-            // numAcctCode
+            // numAB
             // 
-            this.numAcctCode.Enabled = false;
-            this.numAcctCode.Location = new System.Drawing.Point(129, 107);
-            this.numAcctCode.Maximum = new decimal(new int[] {
-            999,
-            0,
+            this.numAB.DecimalPlaces = 2;
+            this.numAB.Enabled = false;
+            this.numAB.Location = new System.Drawing.Point(144, 189);
+            this.numAB.Maximum = new decimal(new int[] {
+            1569325055,
+            23283064,
             0,
             0});
-            this.numAcctCode.Minimum = new decimal(new int[] {
+            this.numAB.Name = "numAB";
+            this.numAB.Size = new System.Drawing.Size(120, 25);
+            this.numAB.TabIndex = 4;
+            this.numAB.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.numAcctCode.Name = "numAcctCode";
-            this.numAcctCode.Size = new System.Drawing.Size(120, 25);
-            this.numAcctCode.TabIndex = 4;
-            this.numAcctCode.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(22, 191);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(111, 17);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "Approved Budget";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(22, 109);
+            this.label12.Location = new System.Drawing.Point(22, 90);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(89, 17);
             this.label12.TabIndex = 3;
@@ -1303,7 +1363,7 @@
             // 
             this.lblAcctClass.AutoSize = true;
             this.lblAcctClass.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAcctClass.Location = new System.Drawing.Point(97, 55);
+            this.lblAcctClass.Location = new System.Drawing.Point(172, 55);
             this.lblAcctClass.Name = "lblAcctClass";
             this.lblAcctClass.Size = new System.Drawing.Size(80, 17);
             this.lblAcctClass.TabIndex = 2;
@@ -1313,7 +1373,7 @@
             // 
             this.lblAcctName.AutoSize = true;
             this.lblAcctName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAcctName.Location = new System.Drawing.Point(97, 36);
+            this.lblAcctName.Location = new System.Drawing.Point(172, 36);
             this.lblAcctName.Name = "lblAcctName";
             this.lblAcctName.Size = new System.Drawing.Size(112, 21);
             this.lblAcctName.TabIndex = 1;
@@ -1322,10 +1382,10 @@
             // lblAcctCode
             // 
             this.lblAcctCode.AutoSize = true;
-            this.lblAcctCode.Font = new System.Drawing.Font("Segoe UI Semibold", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAcctCode.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAcctCode.Location = new System.Drawing.Point(17, 30);
             this.lblAcctCode.Name = "lblAcctCode";
-            this.lblAcctCode.Size = new System.Drawing.Size(74, 45);
+            this.lblAcctCode.Size = new System.Drawing.Size(65, 37);
             this.lblAcctCode.TabIndex = 0;
             this.lblAcctCode.Text = "000";
             // 
@@ -1337,14 +1397,17 @@
             this.dataGridAccounts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colAcctCode,
             this.colAcctName,
-            this.colAcctClass});
+            this.colAcctClass,
+            this.colAB});
             this.dataGridAccounts.Location = new System.Drawing.Point(15, 15);
+            this.dataGridAccounts.MultiSelect = false;
             this.dataGridAccounts.Name = "dataGridAccounts";
             this.dataGridAccounts.ReadOnly = true;
             this.dataGridAccounts.RowHeadersWidth = 4;
             this.dataGridAccounts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridAccounts.Size = new System.Drawing.Size(1186, 200);
             this.dataGridAccounts.TabIndex = 0;
+            this.dataGridAccounts.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridAccounts_CellContentClick);
             this.dataGridAccounts.SelectionChanged += new System.EventHandler(this.dataGridAccounts_SelectionChanged);
             // 
             // colAcctCode
@@ -1358,6 +1421,7 @@
             // colAcctName
             // 
             this.colAcctName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colAcctName.FillWeight = 25F;
             this.colAcctName.HeaderText = "Account Name";
             this.colAcctName.Name = "colAcctName";
             this.colAcctName.ReadOnly = true;
@@ -1365,10 +1429,40 @@
             // colAcctClass
             // 
             this.colAcctClass.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colAcctClass.FillWeight = 50F;
+            this.colAcctClass.FillWeight = 25F;
             this.colAcctClass.HeaderText = "Classification";
             this.colAcctClass.Name = "colAcctClass";
             this.colAcctClass.ReadOnly = true;
+            // 
+            // colAB
+            // 
+            this.colAB.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colAB.FillWeight = 25F;
+            this.colAB.HeaderText = "Approved Budget";
+            this.colAB.Name = "colAB";
+            this.colAB.ReadOnly = true;
+            // 
+            // tabLogs
+            // 
+            this.tabLogs.BackColor = System.Drawing.Color.DimGray;
+            this.tabLogs.Controls.Add(this.txtLogs);
+            this.tabLogs.Location = new System.Drawing.Point(4, 22);
+            this.tabLogs.Name = "tabLogs";
+            this.tabLogs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLogs.Size = new System.Drawing.Size(1216, 470);
+            this.tabLogs.TabIndex = 2;
+            this.tabLogs.Text = "Logs";
+            // 
+            // txtLogs
+            // 
+            this.txtLogs.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtLogs.Location = new System.Drawing.Point(15, 17);
+            this.txtLogs.Multiline = true;
+            this.txtLogs.Name = "txtLogs";
+            this.txtLogs.ReadOnly = true;
+            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtLogs.Size = new System.Drawing.Size(1186, 281);
+            this.txtLogs.TabIndex = 0;
             // 
             // openFileDialog
             // 
@@ -1382,8 +1476,8 @@
             this.BackgroundImage = global::BUR_UI.Properties.Resources.bg;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1264, 681);
-            this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlCreate);
+            this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlAdmin);
             this.Controls.Add(this.picBanner);
             this.Controls.Add(this.label4);
@@ -1394,7 +1488,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "PLM Budget Utilization System 6_4_0_250_02_25_2016";
+            this.Text = "PLM Budget Utilization System 7_5_0_128_03_10_2017";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.grpUser.ResumeLayout(false);
             this.grpUser.PerformLayout();
@@ -1424,8 +1518,10 @@
             this.tabAccounts.ResumeLayout(false);
             this.grpAcctDetails.ResumeLayout(false);
             this.grpAcctDetails.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numAcctCode)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAccounts)).EndInit();
+            this.tabLogs.ResumeLayout(false);
+            this.tabLogs.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1478,7 +1574,6 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.DataGridViewTextBoxColumn colClassification;
         private System.Windows.Forms.DataGridViewTextBoxColumn colAcct_Code;
@@ -1496,8 +1591,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel5;
-        private System.Windows.Forms.ToolStripMenuItem sAAOToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem monthlyReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
         public System.Windows.Forms.TextBox txtPR;
         private System.Windows.Forms.PrintPreviewDialog dlgPrint;
@@ -1531,21 +1624,31 @@
         private System.Windows.Forms.GroupBox grpAcctDetails;
         private System.Windows.Forms.Label lblAcctCode;
         private System.Windows.Forms.DataGridView dataGridAccounts;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctCode;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctClass;
         private System.Windows.Forms.Button btnDeleteAccount;
         private System.Windows.Forms.Button btnEditAccount;
         private System.Windows.Forms.ComboBox cmbAcctClass;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TextBox txtEditAcctName;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.NumericUpDown numAcctCode;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblAcctClass;
         private System.Windows.Forms.Label lblAcctName;
         private System.Windows.Forms.MaskedTextBox txtBURNumber;
         public System.Windows.Forms.TextBox txtPayee;
+        private System.Windows.Forms.TabPage tabLogs;
+        private System.Windows.Forms.TextBox txtLogs;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctCode;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colAcctClass;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colAB;
+        private System.Windows.Forms.Label lblSign;
+        public System.Windows.Forms.ComboBox cmbSign;
+        private System.Windows.Forms.ToolStripMenuItem sAAOToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem monthlyToolStripMenuItem;
+        private System.Windows.Forms.NumericUpDown numAB;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox txtAcctCode;
     }
 }
 

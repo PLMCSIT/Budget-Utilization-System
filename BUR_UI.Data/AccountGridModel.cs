@@ -5,5 +5,6 @@
         public string AcctCode { get; set; }
         public string AcctName { get; set; }
         public string AcctClass { get; set; }
+        public float AB { get; set; }
     }
 }

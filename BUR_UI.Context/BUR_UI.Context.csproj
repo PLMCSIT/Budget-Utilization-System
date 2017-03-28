@@ -69,6 +69,10 @@
       <Project>{92a613b9-e15a-41c0-8c01-fe149c96964e}</Project>
       <Name>BUR_UI.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BUR_UI.Interface\BUR_UI.Interface.csproj">
+      <Project>{4e110985-4758-47f3-bbe0-96a41d51bdd7}</Project>
+      <Name>BUR_UI.Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

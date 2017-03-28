@@ -25,6 +25,9 @@ namespace BUR_UI.Entities
         public string BDHead { get; set; }
         public string BDHead_Pos { get; set; }
         public string Date { get; set; }
+        public string SignatoryOfficeCode { get; set; }
+        public string SignatoryHead { get; set; }
+        public string SignatoryPos { get; set; }
         public List<Items> Particulars { get; set; }
     }
 }

@@ -131,6 +131,23 @@ namespace BUR_UI.Interface
                 {
                     while (reader.Read())
                         Employee_Number = reader.GetString(0);
+                } else
+                {
+                    reader.Close();
+                    comm = new SqlCommand(
+                    "SELECT Employee_Number " +
+                    "FROM dbo.tbl_Ext_Payee " +
+                    "WHERE Employee_Name = '" + Payee + "'",
+                    conn);
+
+                    reader = comm.ExecuteReader();
+
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                            Employee_Number = reader.GetString(0);
+                    }
                 }
 
                 reader.Close();
@@ -245,6 +262,8 @@ namespace BUR_UI.Interface
 
                 reader.Close();
             }
+
+            if (Payee == "") Payee = Payee_Number;
 
             return Payee;
         }

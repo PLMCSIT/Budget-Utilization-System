@@ -61,7 +61,7 @@ namespace BUR_UI.Interface.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=DbSample;Integrated Security=True.
+        ///   Looks up a localized string similar to Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=PLM_BUS;Integrated Security=true.
         /// </summary>
         internal static string ConnectionString {
             get {

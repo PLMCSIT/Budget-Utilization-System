@@ -1,4 +1,5 @@
 ﻿using BUR_UI.Entities;
+using BUR_UI.Context;
 using BUR_UI.Interface;
 using BUR_UI.Logic;
 using System;
@@ -22,6 +23,7 @@ namespace BUR_UI
         public string User_Pos = "";
         public bool isAdmin = false;
         public string BDHead_Number = "20030210";
+        private bool isLoggedIn = false;
 
         int selected = -1;
 
@@ -37,9 +39,21 @@ namespace BUR_UI
         }
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you wan to close the program?", "Close?", MessageBoxButtons.YesNo) == DialogResult.No)
+            if (isLoggedIn)
             {
-                e.Cancel = true;
+                if (MessageBox.Show("Closing will log you out. Continue?", "Close?", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    DbLink link = new DbLink();
+
+                    string log = DateTime.Now.ToString() + " " + User_Name + " logged out.";
+                    link.PushLog(log);
+                    txtLogs.Clear();
+                    txtLogs.Text = link.FillLogs();
+                }
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -51,11 +65,20 @@ namespace BUR_UI
 
             if (loginForm.ShowDialog() == DialogResult.OK)
             {
+                string log;
+                DbLink link = new DbLink();
                 this.Show();
+                isLoggedIn = true;
+
                 User_Name = lblUser.Text = Typer.GetSelectedStaffName(loginForm.UserName);
                 User_Pos = lblPos.Text = Typer.GetPosition(loginForm.UserName);
                 User_Number = loginForm.UserName;
                 picPic.ImageLocation = Typer.GetUserImage(loginForm.UserName);
+
+                log = DateTime.Now.ToString() + " " + User_Name + " logged in.";
+                link.PushLog(log);
+                txtLogs.Clear();
+                txtLogs.Text = link.FillLogs();
 
                 isAdmin = Typer.CheckIfAdmin(loginForm.UserName);
 
@@ -73,12 +96,7 @@ namespace BUR_UI
             }
             else
             {
-                if (MessageBox.Show(
-                    "Are you sure you want to quit?",
-                    "Close?",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) == DialogResult.Yes)
-                    this.Close();
+                this.Close();
             }
             //formSeed();
             dataGridParticulars.DefaultCellStyle.ForeColor = Color.Black;
@@ -87,16 +105,22 @@ namespace BUR_UI
 
             BURList = DbLink.FillGrid();
 
+            txtLogs.Text = DbLink.FillLogs();
+
             FillDGrid(BURList);
 
             if (dataGridMain.Rows.Count > 0) token = GetLastBURNumber();
         }
         private void FillDGrid(List<BURModel> BURList)
         {
+            dataGridMain.Rows.Clear();
+            dataGridAccounts.Rows.Clear();
+            dataGridUsers.Rows.Clear();
             foreach (var bur in BURList)
             {
                 try
                 {
+                    if (bur.Payee == "") bur.Payee = bur.Payee_Number;
                     dataGridMain.Rows.Add(
                         bur.BURNumber,
                         bur.Office,
@@ -158,7 +182,8 @@ namespace BUR_UI
         }
         private void btnAdd_Click(object sender, EventArgs e)
         {
-                if (hasDuplicate(Convert.ToInt32(cmbCode.Text)))
+            if (numAmount.Value > 0) {
+                if (hasDuplicate(cmbCode.Text))
                 {
                     MessageBox.Show(
                         "Account Code " + cmbCode.Text + " already exists.",
@@ -168,9 +193,10 @@ namespace BUR_UI
                 }
                 else
                 {
+                    int i = cmbCode.Text.IndexOf(':');
                     dataGridParticulars.Rows.Add(
                         cmbClass.Text,
-                        cmbCode.Text,
+                        cmbCode.Text.Substring(0, i),
                         txtAcctName.Text,
                         numAmount.Value);
 
@@ -179,14 +205,24 @@ namespace BUR_UI
                     txtAcctName.Clear();
                     numAmount.Value = 0.00m;
                 }
+            } else
+            {
+                MessageBox.Show(
+                    "Amount may not be less than 1.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+
+            
         }
-        private bool hasDuplicate(int Code)
+        private bool hasDuplicate(string Code)
         {
-            List<int> ExistingCodes = new List<int>();
+            List<string> ExistingCodes = new List<string>();
 
             for (int i = 0; i < dataGridParticulars.RowCount; i++)
             {
-                ExistingCodes.Add(Convert.ToInt32(dataGridParticulars.Rows[i].Cells[1].Value));
+                ExistingCodes.Add(dataGridParticulars.Rows[i].Cells[1].Value.ToString());
             }
 
             return ExistingCodes.Contains(Code);
@@ -215,11 +251,22 @@ namespace BUR_UI
         }
         private void toolBtnCreate_Click(object sender, EventArgs e)
         {
+            StartCreate();
+        }
+
+        private void StartCreate()
+        {
             button4.Text = "Create";
             cmbOffice.Enabled = true;
+            cmbPayee.Visible = true;
+            cmbPayee.Enabled = false;
+            txtPayee.Visible = false;
+            txtPayee.Enabled = true;
             txtPR.Enabled = true;
+            txtBURNumber.Clear();
             openBUR();
         }
+
         public void testDialog()
         {
             MessageBox.Show(
@@ -237,8 +284,11 @@ namespace BUR_UI
             List<string> Offices = link.FillOffice();
             List<string> Classes = link.FillClass();
 
-            foreach (var office in Offices) cmbOffice.Items.Add(office);
-            cmbOffice.Items.Add("Other");
+            foreach (var office in Offices) {
+                cmbOffice.Items.Add(office);
+
+                if (office != "External") cmbSign.Items.Add(office);
+            }
             foreach (var cls in Classes) cmbClass.Items.Add(cls);
         }
         private void button5_Click(object sender, EventArgs e)
@@ -261,15 +311,45 @@ namespace BUR_UI
             {
                 try
                 {
+                    if (dataGridParticulars.RowCount < 1)
+                    {
+                        throw new InvalidOperationException("Particulars list cannot be empty.");
+                    }
+                    if (txtBURNumber.Text.Length < 16)
+                    {
+                        throw new InvalidOperationException("BUR Number is invalid.");
+                    }
+                    if (cmbOffice.SelectedItem.ToString() == "External")
+                    {
+                        if (txtPayee.Text == "")
+                        {
+                            throw new InvalidOperationException("Custom Payee Field is empty.");
+                        }
+                    }
+
+                    if (cmbSign.SelectedIndex == -1 && cmbOffice.SelectedItem.ToString() == "External")
+                    {
+                        throw new InvalidOperationException("No signatory office assigned.");
+                    }
+
                     if (AddBUR())
                     {
-                        dataGridMain.Rows.Add(
-                            txtBURNumber.Text,
-                            cmbOffice.Text,
-                            cmbPayee.Text,
-                            DateTime.Now,
-                            User_Name
-                            );
+                        //string payee;
+                        //if (cmbOffice.SelectedText.ToString() == "External") payee = txtPayee.Text;
+                        //else payee = cmbPayee.Text;
+                        //dataGridMain.Rows.Add(
+                        //    txtBURNumber.Text,
+                        //    cmbOffice.Text,
+                        //    payee,
+                        //    DateTime.Now,
+                        //    User_Name
+                        //    );
+
+                        List<BURModel> BURList = new List<BURModel>();
+                        DbLink DbLink = new DbLink();
+
+                        BURList = DbLink.FillGrid();
+                        FillDGrid(BURList);
 
                         pnlCreate.Visible = false;
                         pnlMain.Visible = true;
@@ -280,12 +360,21 @@ namespace BUR_UI
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
 
+                        string log = DateTime.Now.ToString() + " BUR #" + txtBURNumber.Text + " created by " + User_Name + ".";
+                        txtLogs.Clear();
+                        link.PushLog(log);
+                        txtLogs.Text = link.FillLogs();
+
                         ControlClear();
                     }
                 }
                 catch (SqlException ex)
                 {
-                    MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -310,6 +399,11 @@ namespace BUR_UI
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
 
+                    string log = DateTime.Now.ToString() + " BUR #" + txtBURNumber.Text + " edited by " + User_Name + ".";
+                    txtLogs.Clear();
+                    link.PushLog(log);
+                    txtLogs.Text = link.FillLogs();
+
                     ControlClear();
                 }
                 catch (SqlException ex)
@@ -329,8 +423,15 @@ namespace BUR_UI
             string[] Officehead = typer.GetOfficeHeadName(BUR.OfficeCode);
             BUR.OfficeheadName = Officehead[0];
             BUR.OfficeheadPos = Officehead[1];
-            BUR.Payee = cmbPayee.Text;
-            BUR.Payee_Number = typer.GetPayeeId(cmbPayee.Text);
+            if (BUR.Office != "External")
+            {
+                BUR.Payee = cmbPayee.Text;
+                BUR.Payee_Number = typer.GetPayeeId(cmbPayee.Text);
+            }
+            else
+            {
+                BUR.Payee_Number = BUR.Payee = txtPayee.Text;
+            }
             BUR.Description = txtDescription.Text;
             BUR.PRNumber = txtPR.Text;
             BUR.Staff = User_Name;
@@ -338,7 +439,7 @@ namespace BUR_UI
             BUR.BDHead = "Lucresia C. Evangelista";
             BUR.BDHead_Pos = "Budget Officer V (Chief)";
             BUR.BStaff_Number = User_Number;
-            BUR.Date = DateTime.Now.ToString();
+            BUR.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             for (int i = 0; i < dataGridParticulars.RowCount; i++)
             {
@@ -398,17 +499,29 @@ namespace BUR_UI
             {
                 cmbPayee.Visible = true;
                 cmbPayee.Enabled = false;
-                txtPayee.Visible = false;
-            } else if (cmbOffice.SelectedIndex == cmbOffice.Items.Count - 1)
-            {
-                cmbPayee.Visible = false;
-                txtPayee.Visible = true;
-            } else
-            {
-                cmbPayee.Visible = true;
-                cmbPayee.Enabled = true;
-                txtPayee.Visible = false;
             }
+
+            else
+            {
+                if (cmbOffice.SelectedItem.ToString() == "External")
+                {
+                    txtPayee.Visible = true;
+                    cmbPayee.Visible = false;
+                    cmbSign.Visible = true;
+                    lblSign.Visible = true;
+                }
+                else
+                {
+                    cmbPayee.Visible = true;
+                    cmbPayee.Enabled = true;
+                    txtPayee.Visible = false;
+                    cmbSign.Visible = false;
+                    lblSign.Visible = false;
+                    cmbSign.SelectedIndex = -1;
+                }
+            }
+
+            
 
             if (cmbPayee.Visible)
             {
@@ -416,7 +529,10 @@ namespace BUR_UI
 
                 List<string> Payee = link.FillPayeeByOffice(cmbOffice.Text);
 
-                foreach (var item in Payee) cmbPayee.Items.Add(item);
+                foreach (var item in Payee)
+                {
+                    cmbPayee.Items.Add(item);
+                }
             }
         }
         private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
@@ -437,7 +553,12 @@ namespace BUR_UI
         {
             txtAcctName.Clear();
 
-            txtAcctName.Text = link.FillNameByCode(Convert.ToInt32(cmbCode.Text));
+            int i = cmbCode.Text.IndexOf(':');
+
+            if (i >= 0)
+            {
+                txtAcctName.Text = link.FillNameByCode(cmbCode.Text.Substring(0, i));
+            }
         }
         private void dataGridParticulars_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -488,19 +609,54 @@ namespace BUR_UI
                 BUR.BURNumber = txtBURNumber.Text;
                 BUR.Office = cmbOffice.Text;
                 BUR.OfficeCode = typer.GetSelectedOfficeCode(cmbOffice.Text);
-                string[] Officehead = typer.GetOfficeHeadName(BUR.OfficeCode);
-                BUR.OfficeheadName = Officehead[0];
-                BUR.OfficeheadPos = Officehead[1];
-                BUR.Payee = cmbPayee.Text;
-                BUR.Payee_Number = typer.GetPayeeId(cmbPayee.Text);
+                BUR.SignatoryOfficeCode = typer.GetSelectedOfficeCode(cmbSign.Text);
+
+                string[] Officehead = { };
+                string[] SignatoryHead = { };
+
+
+                if (cmbOffice.Text != "External")
+                {
+                    Officehead = typer.GetOfficeHeadName(BUR.OfficeCode);
+                    BUR.OfficeheadName = Officehead[0];
+                    BUR.OfficeheadPos = Officehead[1];
+                } else
+                {
+                    SignatoryHead = typer.GetOfficeHeadName(BUR.SignatoryOfficeCode);
+                    BUR.OfficeheadName = SignatoryHead[0];
+                    BUR.OfficeheadPos = SignatoryHead[1];
+                }
+                
+                
+
+                // External
+
+                if (BUR.Office != "External")
+                {
+                    BUR.Payee_Number = typer.GetPayeeId(cmbPayee.Text);
+                    BUR.Payee = cmbPayee.Text;
+                }
+                else
+                {
+                    BUR.Payee = txtPayee.Text;
+                    BUR.Payee_Number = BUR.Payee;
+                }
                 BUR.Description = txtDescription.Text;
                 BUR.PRNumber = txtPR.Text;
                 BUR.Staff = User_Name;
                 BUR.Position = User_Pos;
-                BUR.BDHead = "Lucresia C. Evangelista";
-                BUR.BDHead_Pos = "Budget Officer V (Chief)";
+
+                string[] budgetOfficeHead = typer.GetOfficeHeadName("29");
+
+                BUR.BDHead = budgetOfficeHead[0];
+                BUR.BDHead_Pos = budgetOfficeHead[1];
                 BUR.BStaff_Number = User_Number;
-                BUR.Date = DateTime.Now.ToString();
+                BUR.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                //if (cmbOffice.SelectedIndex < cmbOffice.Items.Count - 1)
+                //    BUR.Payee_Number = typer.GetPayeeId(cmbPayee.Text);
+                //else
+                //    BUR.Payee_Number = "353";
 
                 for (int i = 0; i < dataGridParticulars.RowCount; i++)
                 {
@@ -536,6 +692,503 @@ namespace BUR_UI
             }
         }
         private void toolBtnEdit_Click(object sender, EventArgs e)
+        {
+            StartGenerate();
+        }
+        private void toolBtnPrint_Click(object sender, EventArgs e)
+        {
+            StartEdit();
+        }
+
+        private void StartEdit()
+        {
+            button4.Text = "Edit";
+
+            DbFill DbFill = new DbFill();
+            DbLink DbLink = new DbLink();
+            Typer Typer = new Typer();
+            BURModel BUR = new BURModel();
+            Context.DbUpdate DbUpdate = new Context.DbUpdate();
+
+            BUR = DbUpdate.FillEditor(dataGridMain.SelectedRows[0].Cells[0].Value.ToString());
+
+            BUR.Office = Typer.GetSelectedOfficeName(BUR.OfficeCode);
+            BUR.BDHead = Typer.GetSelectedBDHeadName(BUR.BDHead_Number);
+            BUR.Staff = Typer.GetSelectedStaffName(BUR.Staff);
+            BUR.Payee = Typer.GetSelectedPayeeName(BUR.Payee_Number);
+
+            pnlMain.Visible = false;
+            pnlCreate.Visible = true;
+
+            txtBURNumber.Text = BUR.BURNumber;
+
+            foreach (var classification in DbLink.FillClass())
+            {
+                cmbClass.Items.Add(classification);
+            }
+
+            cmbOffice.Items.Add(BUR.Office);
+            cmbOffice.SelectedIndex = 0;
+            cmbOffice.Enabled = false;
+
+            if (cmbOffice.SelectedItem.ToString() != "External")
+            {
+                cmbPayee.Items.Clear();
+                cmbPayee.Items.Add(BUR.Payee);
+                cmbPayee.SelectedIndex = 0;
+                cmbPayee.Enabled = false;
+                txtPayee.Visible = false;
+                cmbPayee.Visible = true;
+            }
+            else
+            {
+                txtPayee.Text = BUR.Payee;
+                cmbPayee.Visible = false;
+                txtPayee.Enabled = false;
+                txtPayee.Visible = true;
+            }
+
+
+
+            txtDescription.Text = BUR.Description;
+
+            txtPR.Text = BUR.PRNumber;
+            txtPR.Enabled = false;
+
+            foreach (var item in BUR.Particulars)
+            {
+                dataGridParticulars.Rows.Add(
+                    Typer.GetClassName(item.Code),
+                    item.Code,
+                    Typer.GetAcctName(item.Code),
+                    item.Amount
+                    );
+            }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        { }
+        private bool hasRows()
+        {
+            if (dataGridMain.Rows.Count == 0)
+            {
+                MessageBox.Show(
+                    "There are no rows to manipulate.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            return true;
+        }
+        private void btnLogOut_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(
+                "Are you sure you want to log-out?",
+                "Log-out?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                pnlAdmin.Visible = false;
+                btnAdmin.Text = "Admin Panel";
+                pnlMain.Visible = true;
+                Form1_Load(sender, e);
+                isLoggedIn = false;
+
+                DbLink link = new DbLink();
+
+                string log = DateTime.Now.ToString() + " " + User_Name + " logged out.";
+                link.PushLog(log);
+                txtLogs.Clear();
+                txtLogs.Text = link.FillLogs();
+            }
+        }
+        private void txtAcctName_TextChanged(object sender, EventArgs e)
+        {
+            if (txtAcctName.Text == "")
+                btnAdd.Enabled = false;
+            else
+                btnAdd.Enabled = true;
+        }
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            dataGridMain.Rows.Clear();
+            List<BURModel> BURList = new List<BURModel>();
+            DbLink DbLink = new DbLink();
+
+            BURList = DbLink.FillGrid(txtSearch.Text);
+
+            FillDGrid(BURList);
+        }
+        private void dlgPrint_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                picUserDetail.ImageLocation = openFileDialog.FileName;
+            }
+        }
+        private void btnAdmin_Click(object sender, EventArgs e)
+        {
+            StartAdmin(true);
+        }
+
+        private void StartAdmin(bool returnToMain)
+        {
+            List<UserModel> Users = new List<UserModel>();
+            List<AccountGridModel> Accounts = new List<AccountGridModel>();
+
+            DbLink dbLink = new DbLink();
+            if (btnAdmin.Text == "Admin Panel")
+            {
+                btnAdmin.Text = "Main";
+                pnlMain.Visible = false;
+                pnlCreate.Visible = false;
+                pnlAdmin.Visible = true;
+            }
+            else
+            {
+                dataGridUsers.Rows.Clear();
+                dataGridAccounts.Rows.Clear();
+                
+                if (returnToMain)
+                {
+                    btnAdmin.Text = "Admin Panel";
+                    pnlAdmin.Visible = false;
+                    pnlMain.Visible = true;
+                }
+            }
+
+            Users = dbLink.FillUserModel(Users);
+            Accounts = dbLink.FillAccountGridModel(Accounts);
+
+            FillUserGrid(Users);
+            FillAccountGrid(Accounts);
+        }
+
+        private void FillAccountGrid(List<AccountGridModel> accounts)
+        {
+            dataGridAccounts.Rows.Clear();
+            foreach (var account in accounts)
+            {
+                dataGridAccounts.Rows.Add(
+                    account.AcctCode,
+                    account.AcctName,
+                    account.AcctClass,
+                    account.AB
+                );
+            }
+
+
+
+            //if (dataGridAccounts.RowCount >= 0)
+            //    FillAccountDetails();
+        }
+        private void FillAccountDetails()
+        {
+            try
+            {
+                lblAcctName.Text = dataGridAccounts.SelectedRows[0].Cells[1].Value.ToString();
+                lblAcctClass.Text = dataGridAccounts.SelectedRows[0].Cells[2].Value.ToString();
+                lblAcctCode.Text = dataGridAccounts.SelectedRows[0].Cells[0].Value.ToString();
+                txtAcctCode.Text = dataGridAccounts.SelectedRows[0].Cells[0].Value.ToString();
+                numAB.Value = decimal.Parse(dataGridAccounts.SelectedRows[0].Cells[3].Value.ToString());
+                txtEditAcctName.Text = lblAcctName.Text = dataGridAccounts.SelectedRows[0].Cells[1].Value.ToString();
+                string AcctClass = lblAcctClass.Text = dataGridAccounts.SelectedRows[0].Cells[2].Value.ToString();
+
+                switch (AcctClass)
+                {
+                    case "PS": cmbAcctClass.SelectedIndex = 0; break;
+                    case "MOOE": cmbAcctClass.SelectedIndex = 1; break;
+                    case "FE": cmbAcctClass.SelectedIndex = 2; break;
+                    case "CO": cmbAcctClass.SelectedIndex = 3; break;
+                }
+            }
+            catch
+            { }
+        }
+        private void FillUserGrid(List<UserModel> users)
+        {
+            foreach (var user in users)
+            {
+                dataGridUsers.Rows.Add(
+                    user.User_Number,
+                    user.User_Name,
+                    user.Discriminator,
+                    user.Position,
+                    user.Picture);
+            }
+
+            if (dataGridUsers.RowCount > 0)
+                FillDetails();
+        }
+        private void dataGridUsers_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridUsers.RowCount > 0)
+                FillDetails();
+        }
+        private void FillDetails()
+        {
+            try
+            {
+                txtStaffName.Text = dataGridUsers.SelectedRows[0].Cells[1].Value.ToString();
+                txtStaffPosition.Text = dataGridUsers.SelectedRows[0].Cells[3].Value.ToString();
+
+                if (dataGridUsers.SelectedRows[0].Cells[2].Value.ToString() == "Admin")
+                    cmbType.SelectedIndex = 0;
+                else
+                    cmbType.SelectedIndex = 1;
+
+                picUserDetail.ImageLocation = dataGridUsers.SelectedRows[0].Cells[4].Value.ToString();
+            } catch { }
+        }
+        private void btnAllowEdit_Click(object sender, EventArgs e)
+        {
+            if (btnAllowEdit.Text == "Allow Edit")
+            {
+                btnAllowEdit.BackColor = Color.AliceBlue;
+                btnAllowEdit.Text = "Save changes";
+                dataGridUsers.Enabled = false;
+                btnAdmin.Enabled = false;
+                btnLogOut.Enabled = false;
+                btnSelect.Enabled = true;
+                btnChangePass.Enabled = true;
+                btnDeleteUser.Enabled = true;
+                txtStaffName.ReadOnly = false;
+                cmbType.Enabled = true;
+                txtStaffPosition.ReadOnly = false;
+            }
+            else
+            {
+                btnAllowEdit.BackColor = Control.DefaultBackColor;
+                btnAllowEdit.Text = "Allow Edit";
+                dataGridUsers.Enabled = true;
+                btnAdmin.Enabled = true;
+                btnLogOut.Enabled = true;
+                btnSelect.Enabled = false;
+                btnChangePass.Enabled = false;
+                btnDeleteUser.Enabled = false;
+                txtStaffName.ReadOnly = true;
+                cmbType.Enabled = false;
+                txtStaffPosition.ReadOnly = true;
+
+                if (MessageBox.Show(
+                    "Are you sure you want to save the changes to this user?",
+                    "Save?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    Context.DbUpdate dbUpdate = new Context.DbUpdate();
+                    DbLink dbLink = new DbLink();
+
+                    UserModel User = new UserModel();
+
+                    User.User_Number = dataGridUsers.SelectedRows[0].Cells[0].Value.ToString();
+                    User.User_Name = txtStaffName.Text;
+                    User.Discriminator = cmbType.Text;
+                    User.Position = txtStaffPosition.Text;
+                    User.Picture = picUserDetail.ImageLocation;
+
+                    dbUpdate.UpdateUser(User);
+
+                    dataGridUsers.SelectedRows[0].Cells[1].Value = User.User_Name;
+                    dataGridUsers.SelectedRows[0].Cells[2].Value = User.Discriminator;
+                    dataGridUsers.SelectedRows[0].Cells[3].Value = User.Position;
+                    dataGridUsers.SelectedRows[0].Cells[4].Value = User.Picture;
+
+                    string log = DateTime.Now.ToString() + " USER " + User.User_Name + " updated by " + User_Name + ".";
+                    link.PushLog(log);
+                    txtLogs.Clear();
+                    txtLogs.Text = link.FillLogs();
+
+                    MessageBox.Show(
+                        "Staff " + User.User_Number + "'s details have been successfully updated!",
+                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    FillDetails();
+                }
+            }
+        }
+        private void btnEditAccount_Click(object sender, EventArgs e)
+        {
+            if (btnEditAccount.Text == "Edit Account")
+            {
+                btnEditAccount.Text = "Save Changes";
+
+                numAB.Enabled = true;
+            }
+
+            else
+            {
+                DbLink link = new DbLink();
+                AccountGridModel acct = new AccountGridModel();
+
+                btnEditAccount.Text = "Edit Account";
+
+                acct.AcctCode = txtAcctCode.Text;
+                acct.AB = float.Parse(numAB.Value.ToString());
+                acct.AcctClass = cmbAcctClass.SelectedItem.ToString();
+                acct.AcctName = txtEditAcctName.Text;
+ 
+                numAB.Enabled = false;
+
+                DbInsert insert = new DbInsert();
+
+               try
+                {
+                    insert.EditAccount(acct);
+
+                    string log = DateTime.Now.ToString() + " " + User_Name + " updated the Approved Budget";
+                    log += " of Account Code " + acct.AcctCode + ".";
+
+                    link.PushLog(log);
+                    txtLogs.Clear();
+                    txtLogs.Text = link.FillLogs();
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.Message, "SQL Exception occurred.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    StartAdmin(false);
+                }
+            }
+        }
+        private void dataGridAccounts_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridAccounts.RowCount > 0)
+                FillAccountDetails();
+        }
+        private void btnChangePass_Click(object sender, EventArgs e)
+        {
+            dlgChangePass dlgPass = new dlgChangePass();
+            string StaffNumber = dataGridUsers.SelectedRows[0].Cells[0].Value.ToString();
+
+            if (dlgPass.ShowDialog(StaffNumber) == DialogResult.OK)
+            {
+                MessageBox.Show("You have successfully changed user " + txtStaffName.Text +
+                    "'s password!", "Password changed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+
+        }
+
+        private void picBanner_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // This actually "Print".
+        private void toolBtnDelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtDescription_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StartEdit();
+        }
+
+        private void createToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StartCreate();
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void StartGenerateSAAO()
+        {
+            Builder builder = new Builder();
+            DbLink Link = new DbLink();
+            List<AccountsModel> Acct = new List<AccountsModel>();
+            List<ABModel> AB = new List<ABModel>();
+
+                ExcelInterop Excel = new ExcelInterop();
+
+                
+                    Acct = Link.FillAccountsModel();
+                    AB = Link.FillABModel();
+                    List<SAAOModel> SAAO = builder.FillSAAOModel(Acct, AB);
+
+                    SAAO = SAAO.OrderBy(a => a.Code).ToList();
+
+                    Excel.createSAAOExcel(SAAO);
+                
+        }
+
+        private void StartGenerateMonthly()
+        {
+            Builder builder = new Builder();
+            DbLink Link = new DbLink();
+            List<AccountsModel> Acct = new List<AccountsModel>();
+            List<ABModel> AB = new List<ABModel>();
+
+                ExcelInterop Excel = new ExcelInterop();
+                
+                    dlgSelectMonth dlgMonth = new dlgSelectMonth();
+
+                    if (dlgMonth.ShowDialog() == DialogResult.OK)
+                    {
+                        DateTimeFormatInfo dateTimePicker = new DateTimeFormatInfo();
+                        int month = dlgMonth.Date + 1;
+                        string monthName = dateTimePicker.GetMonthName(month);
+                        string startDate = DateTime.Now.Year + "-" + month.ToString("D2") + "-01";
+                        string endDate = DateTime.Now.Year + "-" + (month + 1).ToString("D2") + "-01";
+                        Typer typer = new Typer();
+
+                        List<SAAOModel> Monthly = new List<SAAOModel>();
+
+                        if (dlgMonth.rdSelected == "CO")
+                        {
+                            Acct = Link.FillAccountsModel(typer.GetSelectedClassCode("CO"), startDate, endDate);
+                            AB = Link.FillABModel(typer.GetSelectedClassCode("CO"));
+                            Monthly = builder.FillMonthlyModel(Acct, AB);
+                            Monthly = Monthly.OrderBy(a => a.Code).ToList();
+                            Excel.createMonthlyCO(Monthly, monthName);
+                        }
+                        else if (dlgMonth.rdSelected == "MOOE")
+                        {
+                            Acct = Link.FillAccountsModel(typer.GetSelectedClassCode("MOOE"), startDate, endDate);
+                            AB = Link.FillABModel(typer.GetSelectedClassCode("MOOE"));
+                            Monthly = builder.FillMonthlyModel(Acct, AB);
+                            Monthly = Monthly.OrderBy(a => a.Code).ToList();
+                            Excel.createMonthlyMOOE(Monthly, monthName);
+                        }
+                        else if (dlgMonth.rdSelected == "FE")
+                        {
+                            Acct = Link.FillAccountsModel(typer.GetSelectedClassCode("FE"), startDate, endDate);
+                            AB = Link.FillABModel(typer.GetSelectedClassCode("FE"));
+                            Monthly = builder.FillMonthlyModel(Acct, AB);
+                            Monthly = Monthly.OrderBy(a => a.Code).ToList();
+                            Excel.createMonthlyFE(Monthly, monthName);
+                        }
+                        else if (dlgMonth.rdSelected == "PS")
+                        {
+                            Acct = Link.FillAccountsModel(typer.GetSelectedClassCode("PS"), startDate, endDate);
+                            AB = Link.FillABModel(typer.GetSelectedClassCode("PS"));
+                            Monthly = builder.FillMonthlyModel(Acct, AB);
+                            Monthly = Monthly.OrderBy(a => a.Code).ToList();
+                            Excel.createMonthlyPS(Monthly, monthName);
+                        }
+            }
+        }
+
+        private void StartGenerate()
         {
             Builder builder = new Builder();
             DbLink Link = new DbLink();
@@ -608,310 +1261,25 @@ namespace BUR_UI
                 }
             }
         }
-        private void toolBtnPrint_Click(object sender, EventArgs e)
+
+        private void sAAOToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            button4.Text = "Edit";
-
-            DbFill DbFill = new DbFill();
-            DbLink DbLink = new DbLink();
-            Typer Typer = new Typer();
-            BURModel BUR = new BURModel();
-            Context.DbUpdate DbUpdate = new Context.DbUpdate();
-
-            BUR = DbUpdate.FillEditor(dataGridMain.SelectedRows[0].Cells[0].Value.ToString());
-
-            BUR.Office = Typer.GetSelectedOfficeName(BUR.OfficeCode);
-            BUR.BDHead = Typer.GetSelectedBDHeadName(BUR.BDHead_Number);
-            BUR.Staff = Typer.GetSelectedStaffName(BUR.Staff);
-            BUR.Payee = Typer.GetSelectedPayeeName(BUR.Payee_Number);
-
-            pnlMain.Visible = false;
-            pnlCreate.Visible = true;
-
-            txtBURNumber.Text = BUR.BURNumber;
-
-            foreach (var classification in DbLink.FillClass())
-            {
-                cmbClass.Items.Add(classification);
-            }
-
-            cmbOffice.Items.Add(BUR.Office);
-            cmbOffice.SelectedIndex = 0;
-            cmbOffice.Enabled = false;
-
-            cmbPayee.Items.Clear();
-            cmbPayee.Items.Add(BUR.Payee);
-            cmbPayee.SelectedIndex = 0;
-            cmbPayee.Enabled = false;
-
-            txtDescription.Text = BUR.Description;
-
-            txtPR.Text = BUR.PRNumber;
-            txtPR.Enabled = false;
-
-            foreach (var item in BUR.Particulars)
-            {
-                dataGridParticulars.Rows.Add(
-                    Typer.GetClassName(item.Code),
-                    item.Code,
-                    Typer.GetAcctName(item.Code),
-                    item.Amount
-                    );
-            }
+            StartGenerateSAAO();
         }
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        { }
-        private bool hasRows()
+
+        private void monthlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (dataGridMain.Rows.Count == 0)
-            {
-                MessageBox.Show(
-                    "There are no rows to manipulate.",
-                    "Warning",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return false;
-            }
-
-            return true;
+            StartGenerateMonthly();
         }
-        private void btnLogOut_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show(
-                "Are you sure you want to log-out?",
-                "Log-out?",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                pnlAdmin.Visible = false;
-                pnlMain.Visible = true;
-                Form1_Load(sender, e);
-            }
-        }
-        private void txtAcctName_TextChanged(object sender, EventArgs e)
-        {
-            if (txtAcctName.Text == "")
-                btnAdd.Enabled = false;
-            else
-                btnAdd.Enabled = true;
-        }
-        private void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-            dataGridMain.Rows.Clear();
-            List<BURModel> BURList = new List<BURModel>();
-            DbLink DbLink = new DbLink();
 
-            BURList = DbLink.FillGrid(txtSearch.Text);
-
-            FillDGrid(BURList);
-        }
-        private void dlgPrint_Load(object sender, EventArgs e)
+        private void dataGridAccounts_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
-        private void btnSelect_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                picUserDetail.ImageLocation = openFileDialog.FileName;
-            }
-        }
-        private void btnAdmin_Click(object sender, EventArgs e)
-        {
-            DbLink dbLink = new DbLink();
-            if (btnAdmin.Text == "Admin Panel")
-            {
-                List<UserModel> Users = new List<UserModel>();
-                List<AccountGridModel> Accounts = new List<AccountGridModel>();
 
-                btnAdmin.Text = "Main";
-                pnlMain.Visible = false;
-                pnlCreate.Visible = false;
-                pnlAdmin.Visible = true;
-
-                Users = dbLink.FillUserModel(Users);
-                Accounts = dbLink.FillAccountGridModel(Accounts);
-
-                FillUserGrid(Users);
-                FillAccountGrid(Accounts);
-            }
-            else
-            {
-                dataGridUsers.Rows.Clear();
-                dataGridAccounts.Rows.Clear();
-                btnAdmin.Text = "Admin Panel";
-                pnlAdmin.Visible = false;
-                pnlMain.Visible = true;
-            }
-        }
-        private void FillAccountGrid(List<AccountGridModel> accounts)
-        {
-            foreach (var account in accounts)
-            {
-                dataGridAccounts.Rows.Add(
-                    account.AcctCode,
-                    account.AcctName,
-                    account.AcctClass
-                );
-            }
-
-
-
-            //if (dataGridAccounts.RowCount >= 0)
-            //    FillAccountDetails();
-        }
-        private void FillAccountDetails()
-        {
-            try
-            {
-                lblAcctCode.Text = dataGridAccounts.SelectedRows[0].Cells[0].Value.ToString();
-                numAcctCode.Value = int.Parse(dataGridAccounts.SelectedRows[0].Cells[0].Value.ToString());
-                txtEditAcctName.Text = lblAcctName.Text = dataGridAccounts.SelectedRows[0].Cells[1].Value.ToString();
-                string AcctClass = lblAcctClass.Text = dataGridAccounts.SelectedRows[0].Cells[2].Value.ToString();
-
-                switch (AcctClass)
-                {
-                    case "PS": cmbAcctClass.SelectedIndex = 0; break;
-                    case "MOOE": cmbAcctClass.SelectedIndex = 1; break;
-                    case "FE": cmbAcctClass.SelectedIndex = 2; break;
-                    case "CO": cmbAcctClass.SelectedIndex = 3; break;
-                }
-            }
-            catch
-            { }
-        }
-        private void FillUserGrid(List<UserModel> users)
-        {
-            foreach (var user in users)
-            {
-                dataGridUsers.Rows.Add(
-                    user.User_Number,
-                    user.User_Name,
-                    user.Discriminator,
-                    user.Position,
-                    user.Picture);
-            }
-
-            if (dataGridUsers.RowCount > 0)
-                FillDetails();
-        }
-        private void dataGridUsers_SelectionChanged(object sender, EventArgs e)
-        {
-            if (dataGridUsers.RowCount > 0)
-                FillDetails();
-        }
-        private void FillDetails()
-        {
-            try
-            {
-                txtStaffName.Text = dataGridUsers.SelectedRows[0].Cells[1].Value.ToString();
-                txtStaffPosition.Text = dataGridUsers.SelectedRows[0].Cells[3].Value.ToString();
-
-                if (dataGridUsers.SelectedRows[0].Cells[2].Value.ToString() == "Admin")
-                    cmbType.SelectedIndex = 0;
-                else
-                    cmbType.SelectedIndex = 1;
-
-                picUserDetail.ImageLocation = dataGridUsers.SelectedRows[0].Cells[4].Value.ToString();
-            } catch { }
-        }
-        private void btnAllowEdit_Click(object sender, EventArgs e)
-        {
-            if (btnAllowEdit.Text == "Allow Edit")
-            {
-                btnAllowEdit.Text = "Save changes";
-                dataGridUsers.Enabled = false;
-
-                btnSelect.Enabled = true;
-                btnChangePass.Enabled = true;
-                btnDeleteUser.Enabled = true;
-                txtStaffName.ReadOnly = false;
-                cmbType.Enabled = true;
-                txtStaffPosition.ReadOnly = false;
-            }
-            else
-            {
-                btnAllowEdit.Text = "Allow Edit";
-                dataGridUsers.Enabled = true;
-
-                btnSelect.Enabled = false;
-                btnChangePass.Enabled = false;
-                btnDeleteUser.Enabled = false;
-                txtStaffName.ReadOnly = true;
-                cmbType.Enabled = false;
-                txtStaffPosition.ReadOnly = true;
-
-                if (MessageBox.Show(
-                    "Are you sure you want to save the changes to this user?",
-                    "Save?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    Context.DbUpdate dbUpdate = new Context.DbUpdate();
-                    DbLink dbLink = new DbLink();
-
-                    UserModel User = new UserModel();
-
-                    User.User_Number = dataGridUsers.SelectedRows[0].Cells[0].Value.ToString();
-                    User.User_Name = txtStaffName.Text;
-                    User.Discriminator = cmbType.Text;
-                    User.Position = txtStaffPosition.Text;
-                    User.Picture = picUserDetail.ImageLocation;
-
-                    dbUpdate.UpdateUser(User);
-
-                    dataGridUsers.SelectedRows[0].Cells[1].Value = User.User_Name;
-                    dataGridUsers.SelectedRows[0].Cells[2].Value = User.Discriminator;
-                    dataGridUsers.SelectedRows[0].Cells[3].Value = User.Position;
-                    dataGridUsers.SelectedRows[0].Cells[4].Value = User.Picture;
-
-                    MessageBox.Show(
-                        "Staff " + User.User_Number + "'s details have been successfully updated!",
-                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    FillDetails();
-                }
-            }
-        }
-        private void btnEditAccount_Click(object sender, EventArgs e)
-        {
-            if (btnEditAccount.Text == "Edit Account")
-            {
-                btnEditAccount.Text = "Save Changes";
-
-                numAcctCode.Enabled = true;
-                txtEditAcctName.ReadOnly = false;
-                cmbAcctClass.Enabled = true;
-            }
-
-            else
-            {
-                btnEditAccount.Text = "Edit Account";
-
-                numAcctCode.Enabled = false;
-                txtEditAcctName.ReadOnly = true;
-                cmbAcctClass.Enabled = false;
-            }
-        }
-        private void dataGridAccounts_SelectionChanged(object sender, EventArgs e)
-        {
-            if (dataGridAccounts.RowCount > 0)
-                FillAccountDetails();
-        }
-        private void btnChangePass_Click(object sender, EventArgs e)
-        {
-            dlgChangePass dlgPass = new dlgChangePass();
-            string StaffNumber = dataGridUsers.SelectedRows[0].Cells[0].Value.ToString();
-
-            if (dlgPass.ShowDialog(StaffNumber) == DialogResult.OK)
-            {
-                MessageBox.Show("You have successfully changed user " + txtStaffName.Text +
-                    "'s password!", "Password changed",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
-
-        }
+        //private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        //{
+        //    MessageBox.Show("Closing");
+        //}
     }
 }

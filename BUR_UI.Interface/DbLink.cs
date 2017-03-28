@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using BUR_UI.Entities;
+using System.Security.Cryptography;
 
 namespace BUR_UI.Interface
 {
@@ -46,6 +47,19 @@ namespace BUR_UI.Interface
 
             return Acct;
         }
+
+        public void PushLog(string log)
+        {
+            using (SqlConnection conn = InitSql())
+            {
+                SqlCommand comm = new SqlCommand("INSERT INTO dbo.tbl_Log (Msg) VALUES ('" + log + "')", conn);
+
+                conn.Open();
+
+                comm.ExecuteNonQuery();
+            }
+        }
+
         public List<String> FillOffice()
         {
             List<string> Offices = new List<string>();
@@ -87,6 +101,11 @@ namespace BUR_UI.Interface
         }
         public bool userValidate(string User, string Pass)
         {
+
+            Object hasher = MD5.Create();
+
+            
+
             using (SqlConnection conn = InitSql())
             {
                 SqlCommand comm = new SqlCommand(
@@ -137,25 +156,49 @@ namespace BUR_UI.Interface
 
             List<string> Payee = new List<string>();
 
-            using (SqlConnection conn = InitSql())
+            if (Office_Name != "External")
             {
-                SqlCommand comm = new SqlCommand(
-                    "SELECT Employee_Name " +
-                    "FROM dbo.tbl_Payee " +
-                    "WHERE Office_Code = '" + Typer.GetSelectedOfficeCode(Office_Name) + "'",
-                    conn);
-
-                conn.Open();
-
-                SqlDataReader reader = comm.ExecuteReader();
-
-                if (reader.HasRows)
+                using (SqlConnection conn = InitSql())
                 {
-                    while (reader.Read())
-                        Payee.Add(reader.GetString(0));
-                }
+                    SqlCommand comm = new SqlCommand(
+                        "SELECT Employee_Name " +
+                        "FROM dbo.tbl_Payee " +
+                        "WHERE Office_Code = '" + Typer.GetSelectedOfficeCode(Office_Name) + "'",
+                        conn);
 
-                reader.Close();
+                    conn.Open();
+
+                    SqlDataReader reader = comm.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                            Payee.Add(reader.GetString(0));
+                    }
+
+                    reader.Close();
+                }
+            } else
+            {
+                using (SqlConnection conn = InitSql())
+                {
+                    SqlCommand comm = new SqlCommand(
+                        "SELECT Employee_Name " +
+                        "FROM dbo.tbl_Ext_Payee",
+                        conn);
+
+                    conn.Open();
+
+                    SqlDataReader reader = comm.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                            Payee.Add(reader.GetString(0));
+                    }
+
+                    reader.Close();
+                }
             }
 
             return Payee;
@@ -194,7 +237,7 @@ namespace BUR_UI.Interface
             using (SqlConnection conn = InitSql())
             {
                 SqlCommand comm = new SqlCommand(
-                    "SELECT Acct_Code " +
+                    "SELECT Acct_Code, Acct_Name " +
                     "FROM dbo.tbl_Particulars " +
                     "WHERE Acct_ClassId = '" + Typer.GetSelectedClassCode(Class_Name) + "'",
                     conn);
@@ -207,7 +250,7 @@ namespace BUR_UI.Interface
                 {
                     while (reader.Read())
                     {
-                        Code.Add(reader.GetString(0));
+                        Code.Add(reader.GetString(0) + ": " + reader.GetString(1));
                     }  
                 }
 
@@ -216,7 +259,7 @@ namespace BUR_UI.Interface
 
             return Code;
         }
-        public string FillNameByCode(int Acct_Code)
+        public string FillNameByCode(string Acct_Code)
         {
             string name = "";
 
@@ -255,7 +298,7 @@ namespace BUR_UI.Interface
             using (conn)
             {
                 SqlCommand comm = new SqlCommand(
-                    "SELECT * FROM dbo.tbl_BUR", conn);
+                    "SELECT * FROM dbo.tbl_BUR ORDER BY BUR_FDate ASC", conn);
 
                 conn.Open();
 
@@ -460,11 +503,11 @@ namespace BUR_UI.Interface
             using (SqlConnection conn = InitSql())
             {
                 SqlCommand comm = new SqlCommand(
-                    "SELECT A.Acct_Code, A.Acct_Name, B.Acct_Class_Name " +
-                    "FROM dbo.tbl_Particulars AS A " +
-                    "INNER JOIN dbo.tbl_Classification AS B " +
-                    "ON A.Acct_ClassId = B.Acct_ClassId " +
-                    "ORDER BY A.Acct_Code ASC", conn);
+                    "SELECT A.Acct_Code, A.Acct_Name, B.Acct_Class_Name, C.AB_Amount FROM" +
+                    " dbo.tbl_Particulars AS A" +
+                    " INNER JOIN dbo.tbl_Classification AS B ON A.Acct_ClassId = B.Acct_ClassId" +
+                    " INNER JOIN dbo.tbl_AB AS C ON A.Acct_Code = C.Acct_Code" +
+                    " ORDER BY A.Acct_Code ASC", conn);
 
                 conn.Open();
 
@@ -479,12 +522,35 @@ namespace BUR_UI.Interface
                             AcctCode = reader.GetString(0),
                             AcctName = reader.GetString(1),
                             AcctClass = reader.GetString(2),
+                            AB = float.Parse(reader.GetDouble(3).ToString())
                         });
                     }
                 }
             }
 
             return accounts;
+        }
+
+        public string FillLogs()
+        {
+            string logs = "";
+            using (SqlConnection conn = InitSql())
+            {
+                SqlCommand comm = new SqlCommand("SELECT Msg FROM dbo.tbl_Log ORDER BY Id DESC", conn);
+                conn.Open();
+
+                SqlDataReader reader = comm.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        logs += reader.GetString(0) + "\r\n";
+                    }
+                }
+            }
+
+            return logs;
         }
     }
 }

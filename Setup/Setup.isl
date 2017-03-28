@@ -3988,7 +3988,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>Classic.theme</td></row>
 		<row><td>ISUSLock</td><td>{784D8AA0-9BE7-4F8E-8DFC-28A1FDEFC922}</td></row>
 		<row><td>ISUSSignature</td><td>{96E271C1-475D-42F2-B344-F5308EF4138A}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewUI</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewUI,viewISToday</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>

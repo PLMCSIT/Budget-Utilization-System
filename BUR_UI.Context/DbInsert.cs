@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using BUR_UI.Entities;
+using BUR_UI.Interface;
 
 namespace BUR_UI.Context
 {
@@ -29,19 +30,19 @@ namespace BUR_UI.Context
 
                 //Insert PR Number.
                 SqlCommand comm = new SqlCommand(
-                    "SET dateformat dmy " +
                     "INSERT INTO dbo.tbl_PR VALUES " +
-                    "('" + BUR.PRNumber + "', '" + DateTime.Today + "')", conn);
+                    "('" + BUR.PRNumber + "', '" + DateTime.Today.ToString("yyyy-MM-dd") + "')", conn);
 
                 comm.ExecuteNonQuery();
 
+
+
                 //Insert BUR Metadata.
                 comm.CommandText =
-                    "SET dateformat dmy " +
                     "INSERT INTO dbo.tbl_BUR VALUES " +
                     "('" + BUR.BURNumber + "', '" + BUR.Date + "', '" + BUR.OfficeCode +
                     "', '20030210', '" + BUR.BStaff_Number + "', '" + BUR.Payee_Number +
-                    "', '" + BUR.PRNumber + "', '" + BUR.Description + "')";
+                    "', '" + BUR.PRNumber + "', '" + BUR.Description + "', '" + BUR.SignatoryOfficeCode + "')";
 
                 comm.ExecuteNonQuery();
             }
@@ -69,13 +70,25 @@ namespace BUR_UI.Context
 
                 //Insert BUR Metadata.
                 SqlCommand comm = new SqlCommand(
-                    "SET dateformat dmy " +
                     "UPDATE dbo.tbl_BUR SET " +
                     "BUR_No = '" + BUR.BURNumber + "', BUR_FDate = '" + BUR.Date + "', Office_Code = '" + BUR.OfficeCode +
                     "', BDHead_Number = '20030210', BStaff_Number = '" + BUR.BStaff_Number + "', Employee_Number = '" + BUR.Payee_Number +
                     "', PR_Code = '" + BUR.PRNumber + "', Description = '" + BUR.Description + "'" +
                     "WHERE BUR_No = '" + BUR.BURNumber + "'", conn);
 
+                comm.ExecuteNonQuery();
+            }
+        }
+
+        public void EditAccount(AccountGridModel acct)
+        {
+            DbLink link = new DbLink();
+
+            using (SqlConnection conn = link.InitSql())
+            {
+                // Insert to the AB table.
+                SqlCommand comm = new SqlCommand("UPDATE dbo.tbl_AB SET AB_Amount = " + acct.AB + " WHERE Acct_Code = '" + acct.AcctCode + "'", conn);
+                conn.Open();
                 comm.ExecuteNonQuery();
             }
         }
